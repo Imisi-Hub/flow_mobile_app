@@ -9,11 +9,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   icon: "./assets/icon.png",
   scheme: "flow",
   userInterfaceStyle: "light",
-  splash: {
-    image: "./assets/splash-icon.png",
-    resizeMode: "contain",
-    backgroundColor: "#FAF6F0",
-  },
   ios: {
     supportsTablet: false,
     bundleIdentifier: "com.imisihub.flow",

@@ -30,8 +30,14 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
+# local env files — .env contains real credentials, NEVER commit it
+# .env.example is safe to commit (contains only placeholder values)
+.env
+.env.local
 .env*.local
+
+# EAS
+eas-build-post-install.js
 
 # typescript
 *.tsbuildinfo
