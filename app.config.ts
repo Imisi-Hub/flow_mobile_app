@@ -32,6 +32,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     "expo-dev-client",
     "expo-sqlite",
     "expo-font",
+    "expo-system-ui",
     "expo-secure-store",
     [
       "expo-local-authentication",
