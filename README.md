@@ -1,6 +1,9 @@
 <div align="center">
 
-  <h1>🌿 FLOW</h1>
+  <a href="https://github.com/Imisi-Hub/flow_mobile_app">
+    <img src="./assets/logo.png" alt="Flow Logo" width="120" style="border-radius: 24px;" />
+  </a>
+  <h1>FLOW</h1>
   <p><strong>Your Tactile Sanctuary for Deep Work</strong></p>
   <p>A state-of-the-art, cross-platform mobile productivity application built with React Native & Expo. Designed with warm organic aesthetics, zero-knowledge hardware encryption, offline-first SQLite synchronization, and domain-partitioned priority tracking.</p>
 
@@ -354,7 +357,7 @@ flow_mobile_app/
 
 ---
 
-## 🌿 Branching Strategy & Git Workflow
+## 🔀 Branching Strategy & Git Workflow
 
 Flow follows a structured Git branching strategy to guarantee production stability:
 
