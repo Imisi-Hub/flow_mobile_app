@@ -1,33 +1,35 @@
-// ─── Flow Design Tokens ──────────────────────────────────────────────────────
-// "The Tactile Sanctuary" — warm, grounded, and alive.
+// Flow Design Tokens
+// "The Tactile Sanctuary" -- warm, grounded, and alive.
 // Inspired by natural materials: terracotta, cream linen, sage, aged wood.
 
-// ─── Colors ──────────────────────────────────────────────────────────────────
+// Colors
 
 export const Colors = {
-  // Primary — warm burnt-orange / terracotta
+  // Primary -- warm burnt-orange / terracotta
   primary: "#C0603C",
   primaryLight: "#D4855E",
   primaryDark: "#9A4A2C",
   primaryMuted: "#F0D9CE", // very light terracotta tint for backgrounds
 
-  // Background — warm cream / off-white linen
+  // Background -- warm cream / off-white linen
   background: "#FAF6F0",
   backgroundSecondary: "#F3EDE4",
   surface: "#FFFFFF",
   surfaceWarm: "#FDF8F3",
+  surfaceElevated: "#FFFCF8",
 
-  // Accent — sage green (Personal category)
+  // Accent -- sage green (Personal category)
   sage: "#7A9E7E",
   sageLight: "#A8C5AB",
   sageDark: "#5A7D5D",
   sageMuted: "#DCE9DD",
 
-  // Secondary — muted warm browns
+  // Secondary -- muted warm browns
   textPrimary: "#2C1E14",      // deep warm brown for headings
   textSecondary: "#7A5C45",    // medium muted brown for body
   textTertiary: "#B09070",     // light warm tan for captions/placeholders
   textOnDark: "#FAF6F0",       // cream text on dark backgrounds
+  textOnPrimary: "#FAF6F0",    // alias for clarity
 
   // Domain colors
   domainWork: "#C0603C",       // terracotta (same as primary)
@@ -41,10 +43,18 @@ export const Colors = {
   info: "#4A7A9E",
 
   // Quadrant colors (Priority Matrix)
-  quadrantQ1: "#C0603C",   // Urgent + Important — terracotta (Do Now)
-  quadrantQ2: "#7A9E7E",   // Not Urgent + Important — sage (Schedule)
-  quadrantQ3: "#C49A6C",   // Urgent + Not Important — amber (Delegate)
-  quadrantQ4: "#B09070",   // Not Urgent + Not Important — tan (Eliminate)
+  quadrantQ1: "#C0603C",   // Urgent + Important -- terracotta (Do Now)
+  quadrantQ2: "#7A9E7E",   // Not Urgent + Important -- sage (Schedule)
+  quadrantQ3: "#C49A6C",   // Urgent + Not Important -- amber (Delegate)
+  quadrantQ4: "#B09070",   // Not Urgent + Not Important -- tan (Eliminate)
+
+  // Chart palette (data visualization, Streaks-style two-tone)
+  chartFill: "#C0603C",
+  chartFillLight: "#F0D9CE",
+  chartFillAlt: "#7A9E7E",
+  chartFillAltLight: "#DCE9DD",
+  chartGrid: "#EDE4D8",
+  chartTrack: "#F0E8DC",
 
   // Neutral
   border: "#E8DDD0",
@@ -55,18 +65,23 @@ export const Colors = {
   // Transparent
   overlay: "rgba(44, 30, 20, 0.4)",
   shimmer: "rgba(250, 246, 240, 0.8)",
+
+  // Focus-mode dark surface
+  focusDark: "#1E120C",
+  focusDarkSurface: "#2C1E14",
+  focusDarkMuted: "#3D2A1C",
 } as const;
 
-// ─── Typography ──────────────────────────────────────────────────────────────
+// Typography
 
 export const FontFamily = {
-  // Headings: Lexend — bold, slightly condensed, highly legible
+  // Headings: Lexend -- bold, slightly condensed, highly legible
   headingBold: "Lexend_700Bold",
   headingSemiBold: "Lexend_600SemiBold",
   headingMedium: "Lexend_500Medium",
   headingRegular: "Lexend_400Regular",
 
-  // Body: Plus Jakarta Sans — clean, modern, warm
+  // Body: Plus Jakarta Sans -- clean, modern, warm
   bodyBold: "PlusJakartaSans_700Bold",
   bodySemiBold: "PlusJakartaSans_600SemiBold",
   bodyMedium: "PlusJakartaSans_500Medium",
@@ -80,19 +95,20 @@ export const FontFamily = {
 export const FontSize = {
   xs: 11,
   sm: 13,
-  base: 16,     // body default — matches PRD spec
+  base: 16,     // body default
   md: 18,
   lg: 20,
   xl: 24,
   xxl: 28,
   xxxl: 34,
   display: 40,
+  hero: 56,     // Pomodoro timer face
 } as const;
 
 export const LineHeight = {
   tight: 1.2,
   snug: 1.35,
-  normal: 1.5,   // body default — matches PRD spec (1.5x)
+  normal: 1.5,
   relaxed: 1.65,
   loose: 1.8,
 } as const;
@@ -178,9 +194,15 @@ export const TextStyles = {
     lineHeight: FontSize.base * LineHeight.tight,
     letterSpacing: LetterSpacing.wide,
   },
+  overline: {
+    fontFamily: FontFamily.bodySemiBold,
+    fontSize: FontSize.xs,
+    letterSpacing: LetterSpacing.widest,
+    color: Colors.textTertiary,
+  },
 } as const;
 
-// ─── Spacing ─────────────────────────────────────────────────────────────────
+// Spacing
 
 export const Spacing = {
   xxs: 2,
@@ -196,8 +218,8 @@ export const Spacing = {
   page: 64,
 } as const;
 
-// ─── Border Radius ───────────────────────────────────────────────────────────
-// Soft, rounded shapes — "no hard edges, tactile feel"
+// Border Radius
+// Soft, rounded shapes -- "no hard edges, tactile feel"
 
 export const Radius = {
   xs: 4,
@@ -210,8 +232,8 @@ export const Radius = {
   full: 9999,
 } as const;
 
-// ─── Shadows ─────────────────────────────────────────────────────────────────
-// Soft/diffuse — low opacity, large blur, minimal offset (PRD spec)
+// Shadows
+// Soft/diffuse -- low opacity, large blur, minimal offset
 
 export const Shadows = {
   none: {
@@ -263,7 +285,8 @@ export const Shadows = {
   },
 } as const;
 
-// ─── Animation ───────────────────────────────────────────────────────────────
+// Animation
+// Spring configs for Reanimated -- platform-native feel
 
 export const Animation = {
   duration: {
@@ -274,15 +297,41 @@ export const Animation = {
     verySlow: 800,
   },
   easing: {
-    // Use with react-native-reanimated Easing
     standard: "ease-in-out",
     decelerate: "ease-out",
     accelerate: "ease-in",
     spring: "spring",
   },
+  // Reanimated withSpring configs
+  spring: {
+    // Snappy task completion -- swipe/tap feedback
+    snappy: {
+      damping: 18,
+      stiffness: 280,
+      mass: 0.8,
+    },
+    // Gentle entrance of cards/sections
+    gentle: {
+      damping: 22,
+      stiffness: 180,
+      mass: 1.0,
+    },
+    // Timer ring breath pulse
+    breath: {
+      damping: 28,
+      stiffness: 120,
+      mass: 1.2,
+    },
+    // Button press feedback
+    press: {
+      damping: 15,
+      stiffness: 350,
+      mass: 0.6,
+    },
+  },
 } as const;
 
-// ─── Z-Index ─────────────────────────────────────────────────────────────────
+// Z-Index
 
 export const ZIndex = {
   base: 0,
@@ -293,7 +342,7 @@ export const ZIndex = {
   tooltip: 400,
 } as const;
 
-// ─── Theme Export ─────────────────────────────────────────────────────────────
+// Theme Export
 
 const Theme = {
   Colors,
