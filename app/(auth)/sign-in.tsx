@@ -1,4 +1,13 @@
-import React, { useState } from "react";
+/**
+ * sign-in.tsx
+ *
+ * Layout family: EDITORIAL BRAND + FORM CARD
+ * Warm-cream background, terracotta brand mark with the "F" wordmark.
+ * Form card on warm white surface with generous internal padding.
+ * Primary CTA: tall, confident terracotta button (min 56pt).
+ * No emoji, no cartoon illustration -- brand identity through typography alone.
+ */
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -10,7 +19,9 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  TextInput as TextInputType,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { router, Link } from "expo-router";
 import {
   Colors,
@@ -27,6 +38,8 @@ export default function SignInScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const passwordRef = useRef<TextInputType>(null);
 
   async function handleSignIn() {
     if (!email.trim() || !password.trim()) {
@@ -37,7 +50,6 @@ export default function SignInScreen() {
     try {
       setIsLoading(true);
       await signInWithEmail(email.trim(), password);
-      // On success, navigate to the main tabs
       router.replace("/(tabs)/dashboard");
     } catch (err: unknown) {
       const message =
@@ -58,8 +70,9 @@ export default function SignInScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* ── Brand mark ── */}
+        {/* ── Brand ── */}
         <View style={styles.brand}>
+          {/* Wordmark circle */}
           <View style={styles.logoMark}>
             <Text style={styles.logoLetter}>F</Text>
           </View>
@@ -69,11 +82,14 @@ export default function SignInScreen() {
 
         {/* ── Form card ── */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Welcome back</Text>
-          <Text style={styles.cardSubtitle}>Sign in to continue your flow</Text>
+          <View style={styles.cardHeading}>
+            <Text style={styles.cardTitle}>Welcome back</Text>
+            <Text style={styles.cardSubtitle}>Continue where you left off</Text>
+          </View>
 
+          {/* Email field */}
           <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>Email</Text>
+            <Text style={styles.fieldLabel}>EMAIL</Text>
             <TextInput
               id="sign-in-email"
               style={styles.input}
@@ -86,31 +102,56 @@ export default function SignInScreen() {
               autoCorrect={false}
               autoComplete="email"
               returnKeyType="next"
+              onSubmitEditing={() => passwordRef.current?.focus()}
             />
           </View>
 
+          {/* Password field */}
           <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>Password</Text>
-            <TextInput
-              id="sign-in-password"
-              style={styles.input}
-              value={password}
-              onChangeText={setPassword}
-              placeholder="••••••••"
-              placeholderTextColor={Colors.textTertiary}
-              secureTextEntry
-              autoComplete="current-password"
-              returnKeyType="done"
-              onSubmitEditing={handleSignIn}
-            />
+            <Text style={styles.fieldLabel}>PASSWORD</Text>
+            <View style={styles.inputWrapper}>
+              <TextInput
+                id="sign-in-password"
+                ref={passwordRef}
+                style={[styles.input, styles.inputWithAction]}
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Min. 8 characters"
+                placeholderTextColor={Colors.textTertiary}
+                secureTextEntry={!showPassword}
+                autoComplete="current-password"
+                returnKeyType="done"
+                onSubmitEditing={handleSignIn}
+              />
+              <TouchableOpacity
+                id="sign-in-toggle-password"
+                style={styles.inputAction}
+                onPress={() => setShowPassword((v) => !v)}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <Text style={styles.inputActionText}>
+                  {showPassword ? "Hide" : "Show"}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
+          {/* Forgot password */}
+          <TouchableOpacity
+            id="sign-in-forgot"
+            style={styles.forgotRow}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.forgotText}>Forgot password?</Text>
+          </TouchableOpacity>
+
+          {/* Primary CTA */}
           <TouchableOpacity
             id="sign-in-button"
             style={[styles.primaryButton, isLoading && styles.buttonDisabled]}
             onPress={handleSignIn}
             disabled={isLoading}
-            activeOpacity={0.85}
+            activeOpacity={0.88}
           >
             {isLoading ? (
               <ActivityIndicator color={Colors.textOnDark} />
@@ -118,21 +159,16 @@ export default function SignInScreen() {
               <Text style={styles.primaryButtonText}>Sign In</Text>
             )}
           </TouchableOpacity>
+        </View>
 
-          <View style={styles.dividerRow}>
-            <View style={styles.divider} />
-            <Text style={styles.dividerText}>or</Text>
-            <View style={styles.divider} />
-          </View>
-
-          <View style={styles.footerRow}>
-            <Text style={styles.footerText}>Don't have an account? </Text>
-            <Link href="/(auth)/sign-up" asChild>
-              <TouchableOpacity id="go-to-sign-up">
-                <Text style={styles.footerLink}>Sign up</Text>
-              </TouchableOpacity>
-            </Link>
-          </View>
+        {/* ── Footer ── */}
+        <View style={styles.footerRow}>
+          <Text style={styles.footerText}>Don't have an account?  </Text>
+          <Link href="/(auth)/sign-up" asChild>
+            <TouchableOpacity id="go-to-sign-up">
+              <Text style={styles.footerLink}>Sign up</Text>
+            </TouchableOpacity>
+          </Link>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -147,7 +183,8 @@ const styles = StyleSheet.create({
   scroll: {
     flexGrow: 1,
     justifyContent: "center",
-    padding: Spacing.xl,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.page,
     gap: Spacing.xxl,
   },
 
@@ -157,9 +194,9 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   logoMark: {
-    width: 72,
-    height: 72,
-    borderRadius: Radius.xl,
+    width: 80,
+    height: 80,
+    borderRadius: Radius.xxl,
     backgroundColor: Colors.primary,
     justifyContent: "center",
     alignItems: "center",
@@ -167,17 +204,22 @@ const styles = StyleSheet.create({
   },
   logoLetter: {
     fontFamily: FontFamily.headingBold,
-    fontSize: 36,
+    fontSize: 40,
     color: Colors.textOnDark,
+    letterSpacing: -1,
   },
   appName: {
-    ...TextStyles.h1,
+    fontFamily: FontFamily.headingBold,
+    fontSize: FontSize.xxxl,
     color: Colors.textPrimary,
+    letterSpacing: -1,
   },
   tagline: {
-    ...TextStyles.bodySmall,
-    textAlign: "center",
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: FontSize.sm,
     color: Colors.textTertiary,
+    textAlign: "center",
+    lineHeight: FontSize.sm * 1.5,
   },
 
   // Card
@@ -187,14 +229,20 @@ const styles = StyleSheet.create({
     padding: Spacing.xl,
     gap: Spacing.base,
     ...Shadows.sm,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+  },
+  cardHeading: {
+    gap: 4,
+    marginBottom: Spacing.xs,
   },
   cardTitle: {
     ...TextStyles.h3,
-    marginBottom: Spacing.xxs,
   },
   cardSubtitle: {
-    ...TextStyles.bodySmall,
-    marginBottom: Spacing.sm,
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: FontSize.sm,
+    color: Colors.textTertiary,
   },
 
   // Form
@@ -203,9 +251,9 @@ const styles = StyleSheet.create({
   },
   fieldLabel: {
     fontFamily: FontFamily.bodySemiBold,
-    fontSize: FontSize.sm,
-    color: Colors.textSecondary,
-    letterSpacing: 0.5,
+    fontSize: FontSize.xs,
+    color: Colors.textTertiary,
+    letterSpacing: 1.5,
   },
   input: {
     height: 52,
@@ -218,6 +266,34 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: Colors.borderLight,
   },
+  inputWrapper: {
+    position: "relative",
+  },
+  inputWithAction: {
+    paddingRight: 60,
+  },
+  inputAction: {
+    position: "absolute",
+    right: Spacing.base,
+    top: 0,
+    bottom: 0,
+    justifyContent: "center",
+  },
+  inputActionText: {
+    fontFamily: FontFamily.bodySemiBold,
+    fontSize: FontSize.sm,
+    color: Colors.primary,
+  },
+
+  forgotRow: {
+    alignSelf: "flex-end",
+    marginTop: -Spacing.xs,
+  },
+  forgotText: {
+    fontFamily: FontFamily.bodySemiBold,
+    fontSize: FontSize.sm,
+    color: Colors.primary,
+  },
 
   // Buttons
   primaryButton: {
@@ -226,35 +302,17 @@ const styles = StyleSheet.create({
     borderRadius: Radius.xl,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: Spacing.sm,
+    marginTop: Spacing.xs,
     ...Shadows.sm,
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   primaryButtonText: {
-    fontFamily: FontFamily.bodySemiBold,
+    fontFamily: FontFamily.headingSemiBold,
     fontSize: FontSize.base,
     color: Colors.textOnDark,
     letterSpacing: 0.5,
-  },
-
-  // Divider
-  dividerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-    marginVertical: Spacing.xs,
-  },
-  divider: {
-    flex: 1,
-    height: 1,
-    backgroundColor: Colors.divider,
-  },
-  dividerText: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: FontSize.sm,
-    color: Colors.textTertiary,
   },
 
   // Footer
@@ -269,7 +327,7 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
   footerLink: {
-    fontFamily: FontFamily.bodySemiBold,
+    fontFamily: FontFamily.headingMedium,
     fontSize: FontSize.sm,
     color: Colors.primary,
   },
