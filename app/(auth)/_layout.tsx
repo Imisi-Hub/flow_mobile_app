@@ -4,7 +4,7 @@ import { Colors } from "@/src/constants/theme";
 
 // ─── Auth Stack Layout ────────────────────────────────────────────────────────
 // Wraps the sign-in and sign-up screens.
-// No header shown — each screen manages its own visual header.
+// No header shown - each screen manages its own visual header.
 
 export default function AuthLayout() {
   return (
