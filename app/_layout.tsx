@@ -1,6 +1,7 @@
 import React from "react";
 import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import NetInfo from "@react-native-community/netinfo";
 import { onlineManager } from "@tanstack/react-query";
@@ -18,7 +19,7 @@ import {
   PlusJakartaSans_700Bold,
 } from "@expo-google-fonts/plus-jakarta-sans";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
-import { Colors } from "@/src/constants/theme";
+import { Colors, FontFamily, FontSize } from "@/src/constants/theme";
 import { initializeDatabase } from "@/src/lib/sqlite";
 import { useEffect } from "react";
 
@@ -90,22 +91,29 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={styles.root}>
-      <QueryClientProvider client={queryClient}>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="settings"
-            options={{
-              headerShown: true,
-              title: "Settings",
-              headerStyle: { backgroundColor: Colors.background },
-              headerTintColor: Colors.textPrimary,
-              presentation: "modal",
-            }}
-          />
-        </Stack>
-      </QueryClientProvider>
+      <SafeAreaProvider>
+        <QueryClientProvider client={queryClient}>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="settings"
+              options={{
+                headerShown: true,
+                title: "Settings",
+                headerStyle: { backgroundColor: Colors.background },
+                headerTintColor: Colors.textPrimary,
+                headerTitleStyle: {
+                  fontFamily: FontFamily.headingSemiBold,
+                  fontSize: FontSize.lg,
+                },
+                headerShadowVisible: false,
+                presentation: "modal",
+              }}
+            />
+          </Stack>
+        </QueryClientProvider>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }
