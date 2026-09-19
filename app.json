@@ -1,5 +1,37 @@
 {
   "expo": {
-    "name": "Flow"
+    "name": "Flow",
+    "slug": "flow",
+    "scheme": "flow",
+    "version": "1.0.0",
+    "platforms": ["ios", "android"],
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.flow.app"
+    },
+    "android": {
+      "package": "com.flow.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#1a0a00"
+      }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#E87040"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
   }
 }
