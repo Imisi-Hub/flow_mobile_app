@@ -1,6 +1,8 @@
-import { ExpoConfig, ConfigContext } from "expo/config";
-
-export default ({ config }: ConfigContext): ExpoConfig => ({
+/**
+ * @param {import('expo/config').ConfigContext} context
+ * @returns {import('expo/config').ExpoConfig}
+ */
+module.exports = ({ config }) => ({
   ...config,
   name: "Flow",
   slug: "flow",
@@ -53,10 +55,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     typedRoutes: true,
   },
   extra: {
+    ...config.extra,
     supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,
     supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
-    eas: {
-      projectId: "your-eas-project-id", // TODO: replace after `eas init`
-    },
   },
 });
