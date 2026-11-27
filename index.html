@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Step-by-step test script for the Flow Android preview, with expected results and a results summary.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Flow Test Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one reading column; parts are bands, each step is a check row with "do" and "expect" */
+:root {
+  --bg: #FAF6F0;
+  --surface: #FFFFFF;
+  --ink: #2C1E14;
+  --ink-2: #664A36;
+  --ink-3: #806246;
+  --line: #E8DDD0;
+  --brand: #C0603C;
+  --brand-ink: #9A4A2C;
+  --brand-soft: #F0D9CE;
+  --ok: #4E7352;
+  --ok-soft: #DCE9DD;
+  --warn: #9E3B46;
+  --warn-soft: #F3E7E9;
+  --font-display: "Lexend", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1E120C; --surface: #2A1B12; --ink: #FAF6F0; --ink-2: #D9C8B8; --ink-3: #B8A391;
+    --line: #3D2A1C; --brand: #D4855E; --brand-ink: #E9A07D; --brand-soft: #3D2418;
+    --ok: #A8C5AB; --ok-soft: #22301F; --warn: #E89AA3; --warn-soft: #3A1D22;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1E120C; --surface: #2A1B12; --ink: #FAF6F0; --ink-2: #D9C8B8; --ink-3: #B8A391;
+  --line: #3D2A1C; --brand: #D4855E; --brand-ink: #E9A07D; --brand-soft: #3D2418;
+  --ok: #A8C5AB; --ok-soft: #22301F; --warn: #E89AA3; --warn-soft: #3A1D22;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 48px;
+}
+.wrap { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; color: var(--ink); }
+h1 { font-size: clamp(1.9rem, 6vw, 2.6rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+h2 { font-size: 1.35rem; font-weight: 600; }
+h3 { font-size: 1.02rem; font-weight: 600; }
+p { margin: 0; max-width: 65ch; }
+a { color: var(--brand-ink); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.eyebrow { font-family: var(--font-body); font-weight: 700; font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--brand-ink); }
+.muted { color: var(--ink-2); }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88em; background: var(--brand-soft); color: var(--ink); padding: 1px 6px; border-radius: 6px; overflow-wrap: anywhere; }
+
+header { padding-top: 36px; display: flex; flex-direction: column; gap: 12px; }
+.mark { display: inline-flex; align-items: center; gap: 10px; }
+.drop { width: 34px; height: 34px; border-radius: 10px; background: var(--brand); display: grid; place-items: center; }
+.drop svg { width: 16px; height: 20px; }
+
+.progress { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 10px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.bar { flex: 1 1 180px; height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; min-width: 0; }
+.bar > span { display: block; height: 100%; width: 0; background: var(--ok); transition: width .25s ease; }
+.count { font-family: var(--font-display); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.install { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.platform { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.platform.ios { background: transparent; border-style: dashed; }
+.platform ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 99px; font-family: var(--font-body); font-weight: 600; font-size: .95rem; text-decoration: none; border: 1.5px solid transparent; cursor: pointer; }
+.btn.primary { background: var(--brand); color: #FFF8F2; }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.status { font-size: .8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.status.ready { color: var(--ok); }
+.status.pending { color: var(--brand-ink); }
+
+section.part { display: flex; flex-direction: column; gap: 12px; }
+.part-head { display: flex; flex-direction: column; gap: 4px; }
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; align-items: start; }
+.step.done { border-color: var(--ok); background: var(--ok-soft); }
+.step.issue { border-color: var(--warn); background: var(--warn-soft); }
+.num { font-family: var(--font-display); font-weight: 700; font-size: .95rem; color: var(--brand-ink); width: 2ch; text-align: right; font-variant-numeric: tabular-nums; padding-top: 2px; }
+.body { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.kv { display: grid; grid-template-columns: 4.6rem 1fr; gap: 2px 10px; }
+.kv dt { font-size: .74rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); padding-top: 3px; }
+.kv dd { margin: 0; min-width: 0; }
+.kv dd ul { margin: 0; padding-left: 18px; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; }
+.toggle { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; border-radius: 99px; border: 1.5px solid var(--line); background: var(--bg); color: var(--ink); font: 600 .88rem var(--font-body); cursor: pointer; }
+.toggle[aria-pressed="true"].pass { background: var(--ok); border-color: var(--ok); color: var(--surface); }
+.toggle[aria-pressed="true"].fail { background: var(--warn); border-color: var(--warn); color: var(--surface); }
+textarea { width: 100%; min-height: 64px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); font: .92rem/1.45 var(--font-body); padding: 10px 12px; resize: vertical; }
+.note { background: var(--brand-soft); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+.limits { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.limit { border-left: 3px solid var(--line); padding: 2px 0 2px 12px; }
+.report { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+#summary { min-height: 140px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .82rem; }
+.feedback { font-size: .88rem; color: var(--ok); min-height: 1.3em; }
+@media (prefers-reduced-motion: reduce) { .bar > span { transition: none; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="mark">
+      <span class="drop" aria-hidden="true"><svg viewBox="0 0 16 20"><path d="M8 0C8 0 0 9 0 13.5A8 8 0 0 0 16 13.5C16 9 8 0 8 0Z" fill="#FAF6F0"/></svg></span>
+      <span class="eyebrow">Flow · Preview build · November 2026</span>
+    </div>
+    <h1>Flow Test Guide</h1>
+    <p class="muted">Install the preview, then go through the 16 steps below. Each step says what to tap and what you should see. Tick <strong>Matches</strong> or <strong>Doesn’t match</strong> as you go, then copy the summary at the end and send it back.</p>
+  </header>
+
+  <div class="progress" role="status" aria-live="polite">
+    <div class="bar" aria-hidden="true"><span id="bar"></span></div>
+    <span class="count" id="count">0 of 16 checked</span>
+  </div>
+
+  <section class="part" aria-labelledby="install-h">
+    <div class="part-head">
+      <span class="eyebrow">Before you start</span>
+      <h2 id="install-h">Install Flow</h2>
+    </div>
+    <div class="install">
+      <div class="platform">
+        <span class="status ready">Ready</span>
+        <h3>Android</h3>
+        <ol>
+          <li>Open the link below on the Android phone.</li>
+          <li>Tap <strong>Install</strong> and open the downloaded file.</li>
+          <li>If asked, allow your browser to install apps, then tap <strong>Install</strong>.</li>
+          <li>If an older Flow test app is installed, uninstall it first.</li>
+        </ol>
+        <a class="btn primary" href="https://expo.dev/accounts/ebendttl/projects/flow/builds/9c08f508-e87f-4c62-9806-0aefcab40a8c" target="_blank" rel="noopener">Open Android install page</a>
+        <code>expo.dev/accounts/ebendttl/projects/flow/builds/9c08f508-e87f-4c62-9806-0aefcab40a8c</code>
+      </div>
+      <div class="platform ios">
+        <span class="status pending">Coming next</span>
+        <h3>iPhone</h3>
+        <p>There’s no iPhone link yet. Apple only allows test apps to be installed through its own channels, which need an Apple Developer account. That account is being set up now.</p>
+        <p class="muted">Once it’s ready, you’ll receive a <strong>TestFlight</strong> invite: install Apple’s free TestFlight app, tap the invite, and install Flow from there. The steps below will be the same on iPhone.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="part" aria-labelledby="a-h">
+    <div class="part-head">
+      <span class="eyebrow">Part A · About 6 minutes · No account needed</span>
+      <h2 id="a-h">First look as a guest</h2>
+    </div>
+    <ol class="steps" data-part="A">
+      <li class="step" data-step="1"><span class="num">1</span><div class="body"><h3>The welcome tour</h3><dl class="kv"><dt>Do</dt><dd>Open Flow for the first time.</dd><dt>Expect</dt><dd>A 7-step tour appears at the bottom. Each step switches to the screen it describes (Today, Projects, Focus, Insights). <strong>Back</strong>, <strong>Next</strong> and <strong>Skip</strong> work. On the last step, tap <strong>Load demo</strong>.</dd></dl></div></li>
+      <li class="step" data-step="2"><span class="num">2</span><div class="body"><h3>Demo data fills the app</h3><dl class="kv"><dt>Do</dt><dd>After the tour, look at Today, then Projects, then Insights.</dd><dt>Expect</dt><dd><ul><li>Today: about 6 tasks grouped under Work, Personal and Family, with a day streak and XP at the top.</li><li>Projects: 4 projects. “Website Refresh” shows a red <strong>Overdue</strong> label.</li><li>Insights: a filled activity heatmap and a named work-style archetype.</li></ul></dd></dl></div></li>
+      <li class="step" data-step="3"><span class="num">3</span><div class="body"><h3>Complete, add and edit tasks</h3><dl class="kv"><dt>Do</dt><dd>Tap a task’s circle. Then tap <strong>Add a task to today</strong>, type a title, pick a priority and tap <strong>Add task</strong>. Then long-press any task.</dd><dt>Expect</dt><dd>The ticked task moves to the bottom of its group and the counts at the top update. The new task appears on Today. Long-press opens the editor, where you can change or delete the task.</dd></dl></div></li>
+      <li class="step" data-step="4"><span class="num">4</span><div class="body"><h3>Projects</h3><dl class="kv"><dt>Do</dt><dd>On Projects, tap <strong>+</strong> and create a project. Then tap any project card.</dd><dt>Expect</dt><dd>The new project appears in the list. Tapping a card opens its editor, with <strong>Archive</strong> and <strong>Delete</strong> at the bottom.</dd></dl></div></li>
+      <li class="step" data-step="5"><span class="num">5</span><div class="body"><h3>A focus session</h3><dl class="kv"><dt>Do</dt><dd>On Focus, press play. Switch to another app for about a minute, then come back. Tap the skip button to end the session.</dd><dt>Expect</dt><dd>The ring fills while running and the time is still correct after you return. After skipping, the screen says “Session complete”, and the session shows up in Insights → Weekly rhythm.</dd></dl></div></li>
+      <li class="step" data-step="6"><span class="num">6</span><div class="body"><h3>Log water</h3><dl class="kv"><dt>Do</dt><dd>On Today, tap <strong>Log</strong> on the Hydration card.</dd><dt>Expect</dt><dd>The glass count goes up by one, and Insights → Health Garden shows the same number.</dd></dl></div></li>
+    </ol>
+  </section>
+
+  <section class="part" aria-labelledby="b-h">
+    <div class="part-head">
+      <span class="eyebrow">Part B · About 8 minutes · Uses your email</span>
+      <h2 id="b-h">Account and sync</h2>
+    </div>
+    <ol class="steps" data-part="B">
+      <li class="step" data-step="7"><span class="num">7</span><div class="body"><h3>Create an account</h3><dl class="kv"><dt>Do</dt><dd>Tap your avatar (top right on Today) → Settings → <strong>Create an account</strong>. Enter your name, an email you can open on this phone, and a password of at least 8 characters.</dd><dt>Expect</dt><dd>A message asks you to check your email.</dd></dl></div></li>
+      <li class="step" data-step="8"><span class="num">8</span><div class="body"><h3>Confirm your email</h3><dl class="kv"><dt>Do</dt><dd>Open the confirmation email on the same phone and tap <strong>Confirm</strong>. If it hasn’t arrived, wait a few minutes before asking for another.</dd><dt>Expect</dt><dd>Flow opens and you’re signed in. If it opens a browser page instead, go back to Flow and sign in with your email and password.</dd></dl></div></li>
+      <li class="step" data-step="9"><span class="num">9</span><div class="body"><h3>Your data moves into your account</h3><dl class="kv"><dt>Do</dt><dd>Look at the avatar and open Settings.</dd><dt>Expect</dt><dd>The avatar shows your initials. The Settings card shows your name and email, and within a few seconds says <strong>All changes synced</strong>.</dd></dl></div></li>
+      <li class="step" data-step="10"><span class="num">10</span><div class="body"><h3>Changes sync on their own</h3><dl class="kv"><dt>Do</dt><dd>Add a task, wait about 5 seconds, then open Settings.</dd><dt>Expect</dt><dd>Settings briefly shows “Syncing…”, then <strong>All changes synced</strong>.</dd></dl></div></li>
+      <li class="step" data-step="11"><span class="num">11</span><div class="body"><h3>Works offline</h3><dl class="kv"><dt>Do</dt><dd>Turn on airplane mode and complete a task. Open Settings. Then turn airplane mode off and wait a few seconds.</dd><dt>Expect</dt><dd>While offline, the task still ticks and Settings shows <strong>1 change waiting</strong>. After reconnecting, it changes to <strong>All changes synced</strong>.</dd></dl></div></li>
+      <li class="step" data-step="12"><span class="num">12</span><div class="body"><h3>Sign out and back in</h3><dl class="kv"><dt>Do</dt><dd>Settings → <strong>Sign Out</strong>. Then Settings → <strong>Sign in to sync</strong> with the same email and password.</dd><dt>Expect</dt><dd>After signing out you stay in the app as a guest and your tasks are cleared from the phone. After signing in again, your tasks come back from the cloud within a few seconds.</dd></dl></div></li>
+    </ol>
+  </section>
+
+  <section class="part" aria-labelledby="c-h">
+    <div class="part-head">
+      <span class="eyebrow">Part C · About 4 minutes</span>
+      <h2 id="c-h">Settings and extras</h2>
+    </div>
+    <ol class="steps" data-part="C">
+      <li class="step" data-step="13"><span class="num">13</span><div class="body"><h3>Biometric lock</h3><dl class="kv"><dt>Do</dt><dd>Settings → turn on <strong>Biometric lock</strong> and confirm with your fingerprint, face or PIN. Leave Flow for at least 30 seconds, then reopen it.</dd><dt>Expect</dt><dd>Flow shows “Flow is locked” and asks you to unlock before showing your data.</dd></dl></div></li>
+      <li class="step" data-step="14"><span class="num">14</span><div class="body"><h3>Export your data</h3><dl class="kv"><dt>Do</dt><dd>Settings → <strong>Export my data</strong>.</dd><dt>Expect</dt><dd>The phone’s share sheet opens with your data as text. You can save it or cancel.</dd></dl></div></li>
+      <li class="step" data-step="15"><span class="num">15</span><div class="body"><h3>Change your name</h3><dl class="kv"><dt>Do</dt><dd>Settings → <strong>Profile</strong>, change your name, tap <strong>Save</strong>.</dd><dt>Expect</dt><dd>The avatar initials and the Settings card update to the new name.</dd></dl></div></li>
+      <li class="step" data-step="16"><span class="num">16</span><div class="body"><h3>Reminders and the tour replay</h3><dl class="kv"><dt>Do</dt><dd>Settings → turn on <strong>Focus reminder</strong> and <strong>Daily Spark</strong>, allowing notifications when asked. Then Settings → <strong>Take the tour</strong>.</dd><dt>Expect</dt><dd>Both switches stay on (reminders arrive daily at 09:30 and 08:00). The tour starts again from the welcome step.</dd></dl></div></li>
+    </ol>
+  </section>
+
+  <section class="part" aria-labelledby="l-h">
+    <div class="part-head">
+      <span class="eyebrow">Good to know</span>
+      <h2 id="l-h">Not bugs</h2>
+    </div>
+    <div class="limits">
+      <p class="limit"><strong>First launch is empty.</strong> A new install has no tasks until you add some or load the demo data.</p>
+      <p class="limit"><strong>Emails can take a few minutes.</strong> During testing, only a few sign-up emails can be sent per hour.</p>
+      <p class="limit"><strong>Step counts aren’t synced yet.</strong> The Health Garden shows water you log. Automatic step counting is planned.</p>
+      <p class="limit"><strong>Friends leaderboard is coming.</strong> Insights shows your own weekly XP for now.</p>
+    </div>
+  </section>
+
+  <section class="report" aria-labelledby="r-h">
+    <h2 id="r-h">Send your results</h2>
+    <p class="muted">The summary below fills in as you tick steps and add notes. Copy it and send it back by email or chat.</p>
+    <label for="summary" class="eyebrow">Results summary</label>
+    <textarea id="summary" readonly></textarea>
+    <div class="controls">
+      <button class="btn primary" id="copy" type="button">Copy summary</button>
+      <button class="btn ghost" id="reset" type="button">Clear my ticks</button>
+    </div>
+    <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+  </section>
+</div>
+
+<script>
+(function () {
+  const KEY = "flow-test-guide-v1";
+  let state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { state = {}; }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+  const steps = Array.from(document.querySelectorAll(".step"));
+
+  steps.forEach((li) => {
+    const n = li.dataset.step;
+    const body = li.querySelector(".body");
+    const controls = document.createElement("div");
+    controls.className = "controls";
+    controls.innerHTML =
+      '<button type="button" class="toggle pass" id="pass-' + n + '" aria-pressed="false">✓ Matches</button>' +
+      '<button type="button" class="toggle fail" id="fail-' + n + '" aria-pressed="false">✗ Doesn’t match</button>';
+    const note = document.createElement("textarea");
+    note.id = "note-" + n;
+    note.placeholder = "What did you see instead?";
+    note.setAttribute("aria-label", "Notes for step " + n);
+    note.hidden = true;
+    body.appendChild(controls);
+    body.appendChild(note);
+
+    const pass = controls.querySelector(".pass"), fail = controls.querySelector(".fail");
+    const s = state[n] || {};
+    note.value = s.note || "";
+    const render = () => {
+      const r = (state[n] || {}).result;
+      pass.setAttribute("aria-pressed", String(r === "pass"));
+      fail.setAttribute("aria-pressed", String(r === "fail"));
+      li.classList.toggle("done", r === "pass");
+      li.classList.toggle("issue", r === "fail");
+      note.hidden = r !== "fail";
+    };
+    const set = (r) => {
+      const cur = (state[n] || {}).result;
+      state[n] = Object.assign({}, state[n], { result: cur === r ? undefined : r });
+      save(); render(); update();
+      if (state[n].result === "fail") note.focus();
+    };
+    pass.addEventListener("click", () => set("pass"));
+    fail.addEventListener("click", () => set("fail"));
+    note.addEventListener("input", () => { state[n] = Object.assign({}, state[n], { note: note.value }); save(); update(); });
+    render();
+  });
+
+  function update() {
+    const checked = steps.filter((li) => (state[li.dataset.step] || {}).result).length;
+    document.getElementById("count").textContent = checked + " of " + steps.length + " checked";
+    document.getElementById("bar").style.width = (checked / steps.length * 100) + "%";
+    const lines = ["Flow preview test — results", ""];
+    steps.forEach((li) => {
+      const n = li.dataset.step, s = state[n] || {};
+      const title = li.querySelector("h3").textContent;
+      const mark = s.result === "pass" ? "OK " : s.result === "fail" ? "ISSUE" : "—  ";
+      lines.push(mark + "  " + n + ". " + title + (s.result === "fail" && s.note ? "\n        " + s.note.trim() : ""));
+    });
+    const issues = steps.filter((li) => (state[li.dataset.step] || {}).result === "fail").length;
+    lines.push("", checked + " of " + steps.length + " checked, " + issues + " with issues.");
+    document.getElementById("summary").value = lines.join("\n");
+  }
+
+  const fb = document.getElementById("feedback");
+  document.getElementById("copy").addEventListener("click", () => {
+    const ta = document.getElementById("summary");
+    const fallback = () => { ta.focus(); ta.select(); fb.textContent = "Selected. Press Copy on your keyboard or long-press to copy."; };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(ta.value).then(() => { fb.textContent = "Copied. Paste it into your message."; }, fallback);
+    } else { fallback(); }
+  });
+  let armed = false;
+  document.getElementById("reset").addEventListener("click", (e) => {
+    if (!armed) { armed = true; e.target.textContent = "Tap again to clear"; fb.textContent = ""; setTimeout(() => { armed = false; e.target.textContent = "Clear my ticks"; }, 3000); return; }
+    state = {}; save(); location.reload();
+  });
+  update();
+})();
+</script>
+
+</body>
+</html>
