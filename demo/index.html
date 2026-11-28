@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Flow Walkthrough</title>
+<meta name="description" content="A 2-minute walkthrough of the Flow Android preview, covering all 16 test steps.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one column; the video leads, chapters below it seek the video */
+:root {
+  --bg: #FAF6F0; --surface: #FFFFFF; --ink: #2C1E14; --ink-2: #664A36; --ink-3: #806246;
+  --line: #E8DDD0; --brand: #C0603C; --brand-ink: #9A4A2C; --brand-soft: #F0D9CE;
+  --font-display: "Lexend", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #1E120C; --surface: #2A1B12; --ink: #FAF6F0; --ink-2: #D9C8B8; --ink-3: #B8A391;
+    --line: #3D2A1C; --brand: #D4855E; --brand-ink: #E9A07D; --brand-soft: #3D2418; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 32px 56px; }
+.wrap { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+h1, h2 { font-family: var(--font-display); margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(1.9rem, 6vw, 2.6rem); letter-spacing: -0.02em; line-height: 1.15; }
+h2 { font-size: 1.25rem; }
+p { margin: 0; max-width: 65ch; }
+.eyebrow { font-weight: 700; font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--brand-ink); }
+.muted { color: var(--ink-2); }
+a { color: var(--brand-ink); text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+video { display: block; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; border-radius: 18px; background: #000; box-shadow: 0 20px 50px -24px rgba(44,30,20,.5); }
+.links { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 99px; font-weight: 600; text-decoration: none; border: 1.5px solid var(--line); color: var(--ink); }
+.btn.primary { background: var(--brand); border-color: var(--brand); color: #FFF8F2; }
+.parts { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.part { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.part ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.chap { width: 100%; display: flex; gap: 12px; align-items: baseline; text-align: left; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 500 .95rem var(--font-body); cursor: pointer; }
+.chap:hover { border-color: var(--brand); }
+.chap[aria-current="true"] { background: var(--brand-soft); border-color: var(--brand); }
+.chap time { font-variant-numeric: tabular-nums; color: var(--ink-3); font-size: .85rem; min-width: 3ch; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header style="display:flex;flex-direction:column;gap:10px">
+    <span class="eyebrow">Flow · Android preview · November 2026</span>
+    <h1>Flow Walkthrough</h1>
+    <p class="muted">A two-minute tour of every step in the test guide. Turn the sound on, and use the chapters to jump to a step.</p>
+  </header>
+
+  <video id="video" controls playsinline preload="metadata" poster="poster.jpg">
+    <source src="flow-explainer.mp4" type="video/mp4">
+    Your browser can’t play this video. <a href="flow-explainer.mp4">Download it instead</a>.
+  </video>
+
+  <div class="links">
+    <a class="btn primary" href="../">Open the test guide</a>
+    <a class="btn" href="https://expo.dev/accounts/ebendttl/projects/flow/builds/02a4b9f5-8bce-4a23-9491-7e03d2437203" target="_blank" rel="noopener">Install the Android preview</a>
+  </div>
+
+  <section style="display:flex;flex-direction:column;gap:12px" aria-labelledby="chapters-h">
+    <h2 id="chapters-h">Chapters</h2>
+    <div class="parts" id="parts"></div>
+  </section>
+</div>
+<script>
+(function () {
+  const parts = [
+    ["Part A · First look", [["0:04", "1. The welcome tour"], ["0:11", "2. Demo data"], ["0:17", "2. Insights"], ["0:22", "3. Tick a task"], ["0:28", "3. Quick add"], ["0:33", "3. Edit a task"], ["0:38", "4. Projects"], ["0:44", "5. A focus session"], ["0:50", "6. Log water"]]],
+    ["Part B · Account and sync", [["0:55", "7. Create an account"], ["1:01", "8. Confirm your email"], ["1:07", "9. Synced to your account"], ["1:12", "10. Changes sync on their own"], ["1:17", "11. Works offline"], ["1:23", "12. Sign out and back in"]]],
+    ["Part C · Settings and extras", [["1:29", "13. Biometric lock"], ["1:34", "14. Export your data"], ["1:39", "15. Change your name"], ["1:44", "16. Reminders and the tour"]]],
+  ];
+  const secs = (s) => { const [m, x] = s.split(":").map(Number); return m * 60 + x; };
+  const video = document.getElementById("video"), box = document.getElementById("parts"), buttons = [];
+  parts.forEach(([title, items]) => {
+    const part = document.createElement("div"); part.className = "part";
+    const h = document.createElement("span"); h.className = "eyebrow"; h.textContent = title; part.appendChild(h);
+    const ol = document.createElement("ol");
+    items.forEach(([at, label]) => {
+      const li = document.createElement("li"), b = document.createElement("button");
+      b.type = "button"; b.className = "chap"; b.dataset.t = secs(at);
+      b.innerHTML = "<time>" + at + "</time><span></span>"; b.querySelector("span").textContent = label;
+      b.addEventListener("click", () => { video.currentTime = secs(at); video.play().catch(() => {}); });
+      li.appendChild(b); ol.appendChild(li); buttons.push(b);
+    });
+    part.appendChild(ol); box.appendChild(part);
+  });
+  video.addEventListener("timeupdate", () => {
+    let cur = null; for (const b of buttons) if (video.currentTime >= +b.dataset.t) cur = b;
+    buttons.forEach((b) => b.setAttribute("aria-current", String(b === cur)));
+  });
+})();
+</script>
+</body>
+</html>
